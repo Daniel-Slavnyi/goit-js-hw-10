@@ -34,6 +34,8 @@ const onInputElInput = (e) => {
                 console.log(countryList);
                 countryListEl.innerHTML = countryList;
             }
+        }).catch(arr => {
+            Notiflix.Notify.warning("Oops, there is no country with that name");
         });
     }
     
