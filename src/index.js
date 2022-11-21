@@ -54,7 +54,7 @@ const onInputElInput = (e) => {
                         Population: ${data[0].population}
                         </p>
                         <p class="country-languages">
-                        Languages: ${data[0].languages.map(el => el.name).join('')}
+                        Languages: ${data[0].languages.map(el => el.name).join(', ')}
                         </p>
                     </div>`;
             }
