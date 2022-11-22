@@ -1,6 +1,6 @@
 import './css/styles.css';
 import pokemonCards from "./templates/make-card.hbs";
-import CountryApiServices from './templates/news-services.js';
+import CountryApiServices from './templates/country-services.js';
 import debounce from "lodash.debounce";
 import Notiflix from 'notiflix';
 
@@ -14,64 +14,74 @@ const countryApiServices = new CountryApiServices();
 const onInputElInput = (e) => {
     countryApiServices.countries = e.target.value.trim();
     
-    if (e.target.value !== '') {
-        countryApiServices.fetchPosts().then(data => {
-            console.log(data);
-            if (data.length > 10) {
-                countryListEl.innerHTML = '';
-                Notiflix.Notify.info("Too many matches found. Please enter a more specific name.");
-            }
-
-            return data;
-        }).then(data => {
-            if (data.length >= 2 && data.length <= 10) {
-                let countryList = data.map(el => {
-                  return  `<li class="country-item">
-                        <img class="country-img" src="${el.flags.svg}" alt="${el.name}">
-                        <p class="country-name">
-                            ${el.name}
-                        </p> 
-                    </li>`;
-                }).join('');
-                console.log(countryList);
-                
-                countryListEl.innerHTML = '';
-                countryItemEl.innerHTML = '';
-                countryListEl.innerHTML = countryList;
-            }
-            return data;
-        }).then(data => {
-            if (data.length === 1) {
-                countryListEl.innerHTML = '';
-                countryItemEl.innerHTML =
-                    `<img src="${data[0].flags.png}" alt=${data[0].name}>
-                    <div>
-                        <h2 class="cuntry-title">${data[0].name}</h2>
-                        <p class="country-capital">
-                        Capital: ${data[0].capital}
-                        </p>
-                        <p class="country-population">
-                        Population: ${data[0].population}
-                        </p>
-                        <p class="country-languages">
-                        Languages: ${data[0].languages.map(el => el.name).join(', ')}
-                        </p>
-                    </div>`;
-            }
-        }).catch(arr => {
-            countryListEl.innerHTML = '';
-            countryItemEl.innerHTML = '';
-            Notiflix.Notify.failure("Oops, there is no country with that name");
-        });
+    if (e.target.value === '') { 
+        return;
     }
+
+    countryApiServices.fetchCountry().then(data => {
+    
+    if (data.length > 10) {
+        countryListEl.innerHTML = '';
+        Notiflix.Notify.info("Too MMany matches found. Please enter a more specific name.");
+    }
+        
+    if (data.length >= 2 && data.length <= 10) {
+        makeCountryList(data);
+    }
+        
+    if (data.length === 1) {
+        makeCountryCard(data[0]);
+    }
+
+    return data;
+}).catch(arr => {
+    showError();
+});
+    
     
 };
 
-inputEl.addEventListener('input', debounce( onInputElInput, 300));
+inputEl.addEventListener('input', debounce(onInputElInput, 300));
 
+function showError() {
+    countryListEl.innerHTML = '';
+    countryItemEl.innerHTML = '';
+    Notiflix.Notify.failure("Oops, there is no country with that name");
+}
 
+function makeCountryCard(elem) {
+    countryListEl.innerHTML = '';
+    countryItemEl.innerHTML =
+        `<img src="${elem.flags.png}" alt=${elem.name}>
+        <div>
+            <h2 class="cuntry-title">${elem.name}</h2>
+            <p class="country-capital">
+            Capital: ${elem.capital}
+            </p>
+            <p class="country-population">
+            Population: ${elem.population}
+            </p>
+            <p class="country-languages">
+            Languages: ${elem.languages.map(el => el.name).join(', ')}
+            </p>
+        </div>`;
+}
 
-
+function makeCountryList(list) {
+    let countryList = list.map(el => {
+        return  `<li class="country-item">
+            <img class="country-img" src="${el.flags.svg}" alt="${el.name}">
+            <p class="country-name">
+                ${el.name}
+            </p> 
+        </li>`;
+    }).join('');
+    console.log(countryList);
+    
+    countryListEl.innerHTML = '';
+    countryItemEl.innerHTML = '';
+    countryListEl.innerHTML = countryList;
+}
 
 
 

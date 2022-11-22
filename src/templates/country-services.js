@@ -1,9 +1,9 @@
-export default class NewApiServices {
+export default class CountryApiServices {
     constructor() {
         this.country = '';
     }
 
-    fetchPosts() {
+    fetchCountry() {
         return fetch(`https://restcountries.com/v2/name/${this.country}?fields=name,capital,population,flags,languages`).then(resolve => {
             if (!resolve.ok) {
                 throw new Error(resolve.statusText);
